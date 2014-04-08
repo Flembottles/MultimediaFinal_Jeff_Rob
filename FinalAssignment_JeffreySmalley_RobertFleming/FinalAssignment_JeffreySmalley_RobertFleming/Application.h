@@ -14,19 +14,16 @@ This source file is part of the
       http://www.ogre3d.org/tikiwiki/
 -----------------------------------------------------------------------------
 */
-#ifndef __TutorialApplication_h_
-#define __TutorialApplication_h_
 
 #include "BaseApplication.h"
 
-class TutorialApplication : public BaseApplication
+class Application : public BaseApplication
 {
 public:
-    TutorialApplication(void);
-    virtual ~TutorialApplication(void);
-
+	Application();
+	virtual ~Application();
 protected:
-    virtual void createScene(void);
+	virtual void createScene();
+	virtual void createCamera();
+	//virtual void createViewports();
 };
-
-#endif // #ifndef __TutorialApplication_h_

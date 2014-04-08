@@ -91,11 +91,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BaseApplication.h" />
-    <ClInclude Include="TutorialApplication.h" />
+    <ClInclude Include="Application.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseApplication.cpp" />
-    <ClCompile Include="TutorialApplication.cpp" />
+    <ClCompile Include="Application.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
