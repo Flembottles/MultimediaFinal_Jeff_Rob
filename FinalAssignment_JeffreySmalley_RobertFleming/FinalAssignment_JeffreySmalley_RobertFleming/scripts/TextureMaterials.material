@@ -1,0 +1,13 @@
+material Textures/CurlingIce
+{
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture CurlingIce.png
+			}
+		}
+	}
+}
