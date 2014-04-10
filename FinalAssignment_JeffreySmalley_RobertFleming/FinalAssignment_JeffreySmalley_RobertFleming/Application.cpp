@@ -30,7 +30,7 @@ Application::~Application(void)
 void Application::createCamera()
 {
 	mCamera = mSceneMgr->createCamera("PlayerCam");
-	mCamera->setPosition(Ogre::Vector3(0,20,500));
+	mCamera->setPosition(Ogre::Vector3(0,15,300));
 	mCamera->lookAt(Ogre::Vector3(0,0,0));
 	mCamera->setNearClipDistance(5);
 
@@ -48,7 +48,10 @@ void Application::createViewports()
 //-------------------------------------------------------------------------------------
 void Application::createScene()
 {
-    // Set ambient light
+	Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_ANISOTROPIC);
+	Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(16);
+	
+	// Set ambient light
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f,0.5f,0.5f));
 	
 	// Create an Ogre plane, "surface" will be used in the parameter for the createPlane
@@ -57,13 +60,13 @@ void Application::createScene()
 	// Create the plane mesh and make it 100 by 1500
 	Ogre::MeshManager::getSingleton().createPlane("icesheet",
 		Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-		surface, 118, 1100, 20, 20, true, 1, 5, 5,
+		surface, 43, 445, 20, 20, true, 1, 1, 1,
 		Ogre::Vector3::UNIT_Z);
 	
 	// Create an entity of the mesh so it can be placed with the scene
 	Ogre::Entity* entGround = mSceneMgr->createEntity("GroundEntity", "icesheet");
 	mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
-	entGround->setMaterialName("Examples/Rockwall"/*<----Ice texture goes here*/);
+	entGround->setMaterialName("Textures/CurlingIce"/*<----Ice texture goes here*/);
 	entGround->setCastShadows(false);
 	
 	//Ogre::Entity* ogreHead = mSceneMgr->createEntity("Head", "ogrehead.mesh");

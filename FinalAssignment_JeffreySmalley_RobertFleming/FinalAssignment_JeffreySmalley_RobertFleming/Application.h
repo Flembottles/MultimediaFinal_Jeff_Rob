@@ -25,5 +25,6 @@ public:
 protected:
 	virtual void createScene();
 	virtual void createCamera();
+	//virtual void setupResources();
 	//virtual void createViewports();
 };
