@@ -27,6 +27,7 @@ Application::~Application(void)
 
 //-------------------------------------------------------------------------------------
 
+
 void Application::createCamera()
 {
 	mCamera = mSceneMgr->createCamera("PlayerCam");
@@ -68,6 +69,26 @@ void Application::createScene()
 	mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
 	entGround->setMaterialName("Textures/CurlingIce"/*<----Ice texture goes here*/);
 	entGround->setCastShadows(false);
+
+	// The below code will get the plane to interact with the physics engine
+	
+	btTransform iceTransform;
+	iceTransform.setIdentity();
+	iceTransform.setOrigin(btVector3(0,-50,0));
+
+	// Set the mass of the ground. In this case it is 0 because the ground is static.
+	btScalar iceMass(0);
+	btVector3 localIceInertia(0,0,0);
+
+	btCollisionShape *iceShape = new btBoxShape(btVector3(btScalar(50),btScalar(50),btScalar(50)));
+	btDefaultMotionState *iceMotionState = new btDefaultMotionState(iceTransform);
+
+	iceShape->calculateLocalInertia(iceMass, localIceInertia);
+
+	btRigidBody::btRigidBodyConstructionInfo iceRBInfo(iceMass,iceMotionState,iceShape,localIceInertia);
+	btRigidBody *iceBody = new btRigidBody(iceRBInfo);
+
+	dynamicsWorld->addRigidBody(iceBody);
 	
 	//Ogre::Entity* ogreHead = mSceneMgr->createEntity("Head", "ogrehead.mesh");
 
@@ -80,7 +101,48 @@ void Application::createScene()
 	//light->setPosition(20.0f, 80.0f, 50.0f);
 }
 
+bool Application::setup()
+{
+	mRoot = new Ogre::Root(mPluginsCfg);
+ 
+	setupResources();
+ 
+	bool carryOn = configure();
+	if (!carryOn) return false;
+	
+	collisionConfiguraton = new btDefaultCollisionConfiguration();
 
+	dispatcher = new btCollisionDispatcher(collisionConfiguraton);
+
+	overLappingPairCache = new btDbvtBroadphase();
+
+	solver = new btSequentialImpulseConstraintSolver();
+
+	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,overLappingPairCache,solver,collisionConfiguraton);
+
+	btCollisionShape* collisionShape;
+
+	btRigidBody* physicsAccessors;
+
+	chooseSceneManager();
+	createCamera();
+	createViewports();
+ 
+	// Set default mipmap level (NB some APIs ignore this)
+	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
+ 
+	// Create any resource listeners (for loading screens)
+	createResourceListener();
+	// Load resources
+	loadResources();
+ 
+	// Create the scene
+	createScene();
+ 
+	createFrameListener();
+ 
+	return true;
+}
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 #define WIN32_LEAN_AND_MEAN
