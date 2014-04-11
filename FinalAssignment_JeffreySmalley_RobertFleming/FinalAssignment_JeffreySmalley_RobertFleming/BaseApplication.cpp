@@ -267,6 +267,7 @@ bool BaseApplication::setup(void)
 	createScene();
  
 	createFrameListener();
+
  
 	return true;
 };
