@@ -25,6 +25,10 @@ This source file is part of the
 #include <OgreSceneManager.h>
 #include <OgreRenderWindow.h>
 #include <OgreConfigFile.h>
+
+//physics headers
+#include <btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
  
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
 #  include <OIS/OISEvents.h>

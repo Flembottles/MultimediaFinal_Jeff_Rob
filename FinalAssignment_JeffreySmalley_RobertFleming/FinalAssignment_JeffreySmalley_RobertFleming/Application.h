@@ -17,12 +17,28 @@ This source file is part of the
 
 #include "BaseApplication.h"
 
+
 class Application : public BaseApplication
 {
 public:
 	Application();
 	virtual ~Application();
 protected:
+	btDefaultCollisionConfiguration* collisionConfiguraton;
+
+	btCollisionDispatcher* dispatcher;
+
+	btDbvtBroadphase* overLappingPairCache;
+
+	btSequentialImpulseConstraintSolver* solver;
+
+	btDiscreteDynamicsWorld* dynamicsWorld;
+
+	btCollisionShape* collisionShape;
+
+	btRigidBody* physicsAccessors;
+	
+	virtual bool setup();
 	virtual void createScene();
 	virtual void createCamera();
 	//virtual void setupResources();
