@@ -85,20 +85,40 @@ void Application::createScene()
 
 	iceShape->calculateLocalInertia(iceMass, localIceInertia);
 
-	btRigidBody::btRigidBodyConstructionInfo iceRBInfo(iceMass,iceMotionState,iceShape,localIceInertia);
-	btRigidBody *iceBody = new btRigidBody(iceRBInfo);
+	btRigidBody::btRigidBodyConstructionInfo RBInfo(iceMass,iceMotionState,iceShape,localIceInertia);
+	btRigidBody *iceBody = new btRigidBody(RBInfo);
 
 	dynamicsWorld->addRigidBody(iceBody);
+	/*
+	Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().getByName("cube.mesh").staticCast<Ogre::Mesh>();
 	
-	//Ogre::Entity* ogreHead = mSceneMgr->createEntity("Head", "ogrehead.mesh");
+	Ogre::Entity *rockEntity = mSceneMgr->createEntity(mesh);
 
-	//Ogre::SceneNode* headNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("HeadNode");
-	//headNode->attachObject(ogreHead);
+	Ogre::SceneNode *rockNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("PhysRock");
 
-	//Ogre::Entity* surface = mSceneMgr->createEntity(
+	rockNode->attachObject(rockEntity);
+	
+	btCollisionShape *rockCollisionShape = new btBoxShape(btVector3(1.0f, 1.0f, 1.0f));
+	
+	//this->physicsEngine->getCollisionShapes().push_back(newRigidShape);
+	
+	btTransform startTransform;
+	startTransform.setIdentity();
+	startTransform.setRotation(btQuaternion(1.0f, 1.0f, 1.0f, 0));
 
-	//Ogre::Light* light = mSceneMgr->createLight("MainLight");
-	//light->setPosition(20.0f, 80.0f, 50.0f);
+	btScalar mass = 0.1f;
+	btVector3 localInertia(0,0,0);
+
+	startTransform.setOrigin(btVector3(0,0,0));
+	rockCollisionShape->calculateLocalInertia(mass, localInertia);
+
+	btDefaultMotionState* rockMotionState = new btDefaultMotionState(startTransform);
+	btRigidBody* body = new btRigidBody(RBInfo);
+	body->setRestitution(1);
+	body->setUserPointer(rockNode);
+
+	dynamicsWorld->addRigidBody(body);
+	*/
 }
 
 bool Application::setup()
