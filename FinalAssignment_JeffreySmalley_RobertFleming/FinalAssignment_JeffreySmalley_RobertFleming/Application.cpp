@@ -89,15 +89,25 @@ void Application::createScene()
 	btRigidBody *iceBody = new btRigidBody(RBInfo);
 
 	dynamicsWorld->addRigidBody(iceBody);
-	/*
-	Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().getByName("cube.mesh").staticCast<Ogre::Mesh>();
 	
-	Ogre::Entity *rockEntity = mSceneMgr->createEntity(mesh);
-
-	Ogre::SceneNode *rockNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("PhysRock");
-
+	
+	
+	//Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().getByName("rock.mesh").staticCast<Ogre::Mesh>();
+	
+	Ogre::Entity *rockEntity = mSceneMgr->createEntity("Rock", "rock.mesh");
+	Ogre::SceneNode *rockNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("RockNode");
+	rockNode->scale(5.0,5.0,5.0);
+	rockNode->pitch(Ogre::Degree(90));
 	rockNode->attachObject(rockEntity);
-	
+	rockEntity->setMaterialName("RedRockMaterial");
+
+	Ogre::Entity *rockEntity2 = mSceneMgr->createEntity("Rock2", "rock.mesh");
+	Ogre::SceneNode *rockNode2 = mSceneMgr->getRootSceneNode()->createChildSceneNode("RockNode2",Ogre::Vector3(0,0,-30));
+	rockNode2->scale(5.0,5.0,5.0);
+	rockNode2->pitch(Ogre::Degree(90));
+	rockNode2->attachObject(rockEntity2);
+	rockEntity2->setMaterialName("YellowRockMaterial");
+	/*
 	btCollisionShape *rockCollisionShape = new btCylinderShape(btVector3(1.0f, 1.0f, 1.0f));
 	
 	//this->physicsEngine->getCollisionShapes().push_back(newRigidShape);
