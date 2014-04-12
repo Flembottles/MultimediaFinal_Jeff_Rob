@@ -98,7 +98,7 @@ void Application::createScene()
 
 	rockNode->attachObject(rockEntity);
 	
-	btCollisionShape *rockCollisionShape = new btBoxShape(btVector3(1.0f, 1.0f, 1.0f));
+	btCollisionShape *rockCollisionShape = new btCylinderShape(btVector3(1.0f, 1.0f, 1.0f));
 	
 	//this->physicsEngine->getCollisionShapes().push_back(newRigidShape);
 	
