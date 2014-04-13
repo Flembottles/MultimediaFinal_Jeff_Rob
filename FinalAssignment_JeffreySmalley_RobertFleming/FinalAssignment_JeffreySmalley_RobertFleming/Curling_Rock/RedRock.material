@@ -16,7 +16,7 @@ material _missing_material_
 
 // None genrated by blender2ogre 0.6.0
 
-material None 
+material RedRockMaterial 
 {
     receive_shadows on 
 
@@ -24,7 +24,13 @@ material None
     {
         pass None
         {
-            ambient 0.800000011920929 0.800000011920929 0.800000011920929 1.0
+            
+	    texture_unit
+	    {
+		texture RedRock.png
+	    }
+            
+	    ambient 0.800000011920929 0.800000011920929 0.800000011920929 1.0
             diffuse 0.6400000190734865 0.6400000190734865 0.6400000190734865 1.0
             specular 0.5 0.5 0.5 1.0 12.5
             emissive 0.0 0.0 0.0 1.0
@@ -45,7 +51,7 @@ material None
             scene_blend_op add
             shading gouraud
             transparent_sorting on
-
+	    
         }
     }
 }
