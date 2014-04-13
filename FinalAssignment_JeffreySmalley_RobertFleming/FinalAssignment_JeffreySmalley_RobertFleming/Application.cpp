@@ -47,6 +47,52 @@ void Application::createViewports()
 }
 */
 //-------------------------------------------------------------------------------------
+void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::String material)
+{
+	Ogre::Vector3 size = Ogre::Vector3::ZERO;
+	Ogre::Vector3 pos = Ogre::Vector3::ZERO;
+
+	pos.x = Position.getX();
+	pos.y = Position.getY();
+	pos.z = Position.getZ();
+
+	//Ogre::String number = Ogre::StringConverter::toString(i+1);
+	Ogre::Entity *rockEntity = mSceneMgr->createEntity("Rock "+Ogre::StringConverter::toString(m_pNumRocks), "rock.mesh");
+	rockEntity->setCastShadows(true);
+	//rockNode[i] = mSceneMgr->getRootSceneNode()->createChildSceneNode("RockNode "+ number,Ogre::Vector3(0,1,170));
+	Ogre::AxisAlignedBox boundingBox = rockEntity->getBoundingBox();
+	size = boundingBox.getSize()*0.95f;
+		
+	//rockNode[i]->attachObject(rockEntity[i]);
+	rockEntity->setMaterialName(material);
+	Ogre::SceneNode *rockNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	rockNode->scale(1.5,1.5,1.5);
+	//rockNode->pitch(Ogre::Degree(90));
+	rockNode->attachObject(rockEntity);
+	rockNode->setPosition(pos);
+
+	btTransform Transform;
+	Transform.setIdentity();
+	Transform.setOrigin(Position);
+
+	btDefaultMotionState *MotionState = new btDefaultMotionState(Transform);
+
+	btVector3 HalfExtents(size.x*0.5f,size.y*0.5f,size.z*0.5f);
+	btCollisionShape *Shape = new btBoxShape(HalfExtents);
+
+	btVector3 localInertia;
+	Shape->calculateLocalInertia(Mass, localInertia);
+
+	btRigidBody *RigidBody = new btRigidBody(Mass, MotionState, Shape, localInertia);
+		
+	RigidBody->setUserPointer((void*)(rockNode));
+	dynamicsWorld->addRigidBody(RigidBody);
+
+	Rocks.push_back(RigidBody);
+
+	m_pNumRocks++;
+}
+
 void Application::createScene()
 {
 	Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_ANISOTROPIC);
@@ -54,8 +100,31 @@ void Application::createScene()
 	
 	// Set ambient light
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f,0.5f,0.5f));
-	
+	Ogre::Light* pointLight1 = mSceneMgr->createLight("light1");
+	pointLight1->setType(Ogre::Light::LT_POINT);
+	pointLight1->setPosition(Ogre::Vector3(0,30,0));
+
+	pointLight1->setDiffuseColour(0.5,0.5,0.5);
+	pointLight1->setSpecularColour(0.5,0.5,0.5);
+
+	Ogre::Light* pointLight2 = mSceneMgr->createLight("light2");
+	pointLight2->setType(Ogre::Light::LT_POINT);
+	pointLight2->setPosition(Ogre::Vector3(0,30,-180));
+
+	pointLight2->setDiffuseColour(0.5,0.5,0.5);
+	pointLight2->setSpecularColour(0.5,0.5,0.5);
+
+	Ogre::Light* pointLight3 = mSceneMgr->createLight("light3");
+	pointLight3->setType(Ogre::Light::LT_POINT);
+	pointLight3->setPosition(Ogre::Vector3(0,30,180));
+
+	pointLight3->setDiffuseColour(0.5,0.5,0.5);
+	pointLight3->setSpecularColour(0.5,0.5,0.5);
+
+	//mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE); <--- Really expensive, try it your GPU
+	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_MODULATIVE);
 	// Create an Ogre plane, "surface" will be used in the parameter for the createPlane
+	Ogre::Entity* entGround;
 	Ogre::Plane surface(Ogre::Vector3::UNIT_Y,0);
 
 	// Create the plane mesh and make it 100 by 1500
@@ -65,60 +134,124 @@ void Application::createScene()
 		Ogre::Vector3::UNIT_Z);
 	
 	// Create an entity of the mesh so it can be placed with the scene
-	Ogre::Entity* entGround = mSceneMgr->createEntity("GroundEntity", "icesheet");
-	mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
+	entGround = mSceneMgr->createEntity("GroundEntity", "icesheet");
+	mSceneMgr->getRootSceneNode()->createChildSceneNode();
 	entGround->setMaterialName("Textures/CurlingIce"/*<----Ice texture goes here*/);
-	entGround->setCastShadows(false);
+	entGround->setCastShadows(true);
+	Ogre::SceneNode *groundNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	groundNode->attachObject(entGround);
 
 	// The below code will get the plane to interact with the physics engine
 	
-	btTransform iceTransform;
-	iceTransform.setIdentity();
-	iceTransform.setOrigin(btVector3(0,-50,0));
+	btTransform groundTransform;
+	groundTransform.setIdentity();
+	groundTransform.setOrigin(btVector3(0,0,0));
 
-	// Set the mass of the ground. In this case it is 0 because the ground is static.
-	btScalar iceMass(0);
-	btVector3 localIceInertia(0,0,0);
+	btDefaultMotionState *motionState = new btDefaultMotionState(groundTransform);
+	btCollisionShape *groundShape = new btStaticPlaneShape(btVector3(0,1,0),0);
 
-	btCollisionShape *iceShape = new btBoxShape(btVector3(btScalar(50),btScalar(50),btScalar(50)));
-	btDefaultMotionState *iceMotionState = new btDefaultMotionState(iceTransform);
-
-	iceShape->calculateLocalInertia(iceMass, localIceInertia);
-
-	btRigidBody::btRigidBodyConstructionInfo RBInfo(iceMass,iceMotionState,iceShape,localIceInertia);
-	btRigidBody *iceBody = new btRigidBody(RBInfo);
-
-	dynamicsWorld->addRigidBody(iceBody);
-	/*
-	Ogre::MeshPtr mesh = Ogre::MeshManager::getSingleton().getByName("cube.mesh").staticCast<Ogre::Mesh>();
+	btVector3 localInertia;
+	groundShape->calculateLocalInertia(0, localInertia);
 	
-	Ogre::Entity *rockEntity = mSceneMgr->createEntity(mesh);
+	btRigidBody *groundRigidBody = new btRigidBody(0, motionState, groundShape, localInertia);
+	groundRigidBody->setUserPointer((void*)(groundNode));
 
-	Ogre::SceneNode *rockNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("PhysRock");
+	dynamicsWorld->addRigidBody(groundRigidBody);
 
-	rockNode->attachObject(rockEntity);
+	//Ogre::Entity *rockEntity[24];//= mSceneMgr->createEntity("Rock", "rock.mesh");
+	//Ogre::SceneNode *rockNode[24];//= mSceneMgr->getRootSceneNode()->createChildSceneNode("RockNode",Ogre::Vector3(0,1,170));
 	
-	btCollisionShape *rockCollisionShape = new btCylinderShape(btVector3(1.0f, 1.0f, 1.0f));
-	
-	//this->physicsEngine->getCollisionShapes().push_back(newRigidShape);
-	
-	btTransform startTransform;
-	startTransform.setIdentity();
-	startTransform.setRotation(btQuaternion(1.0f, 1.0f, 1.0f, 0));
+	createRock(btVector3(-5,5,200),1,"RedRockMaterial");
+	createRock(btVector3(-10,5,200),1,"RedRockMaterial");
+	createRock(btVector3(-15,5,200),1,"RedRockMaterial");
 
-	btScalar mass = 0.1f;
-	btVector3 localInertia(0,0,0);
+	createRock(btVector3(-5,5,205),1,"RedRockMaterial");
+	createRock(btVector3(-10,5,205),1,"RedRockMaterial");
+	createRock(btVector3(-15,5,205),1,"RedRockMaterial");
 
-	startTransform.setOrigin(btVector3(0,0,0));
-	rockCollisionShape->calculateLocalInertia(mass, localInertia);
+	createRock(btVector3(-5,5,210),1,"RedRockMaterial");
+	createRock(btVector3(-10,5,210),1,"RedRockMaterial");
+	createRock(btVector3(-15,5,210),1,"RedRockMaterial");
 
-	btDefaultMotionState* rockMotionState = new btDefaultMotionState(startTransform);
-	btRigidBody* body = new btRigidBody(RBInfo);
-	body->setRestitution(1);
-	body->setUserPointer(rockNode);
+	createRock(btVector3(-5,5,215),1,"RedRockMaterial");
+	createRock(btVector3(-10,5,215),1,"RedRockMaterial");
+	createRock(btVector3(-15,5,215),1,"RedRockMaterial");
 
-	dynamicsWorld->addRigidBody(body);
-	*/
+
+	createRock(btVector3(5,5,200),1,"YellowRockMaterial");
+	createRock(btVector3(10,5,200),1,"YellowRockMaterial");
+	createRock(btVector3(15,5,200),1,"YellowRockMaterial");
+
+	createRock(btVector3(5,5,205),1,"YellowRockMaterial");
+	createRock(btVector3(10,5,205),1,"YellowRockMaterial");
+	createRock(btVector3(15,5,205),1,"YellowRockMaterial");
+
+	createRock(btVector3(5,5,210),1,"YellowRockMaterial");
+	createRock(btVector3(10,5,210),1,"YellowRockMaterial");
+	createRock(btVector3(15,5,210),1,"YellowRockMaterial");
+
+	createRock(btVector3(5,5,215),1,"YellowRockMaterial");
+	createRock(btVector3(10,5,215),1,"YellowRockMaterial");
+	createRock(btVector3(15,5,215),1,"YellowRockMaterial");
+	for (int i=12;i<24;i++)
+	{
+		//rockEntity[i] = mSceneMgr->createEntity("Rock"+i, "rock.mesh");
+		//rockNode[i] = mSceneMgr->getRootSceneNode()->createChildSceneNode("RockNode"+i,Ogre::Vector3(0,1,170));
+		//rockNode[i]->scale(1.5,1.5,1.5);
+		//rockNode[i]->pitch(Ogre::Degree(90));
+		//rockNode[i]->attachObject(rockEntity[i]);
+		//rockEntity[i]->setMaterialName("YellowRockMaterial");
+	}
+}
+void Application::updatePhysics(unsigned int deltaTime)
+{
+	dynamicsWorld->stepSimulation(deltaTime * 0.001f, 60);
+	btRigidBody *tObject;
+
+	for (std::vector<btRigidBody*>::iterator it = Rocks.begin(); it != Rocks.end(); ++it)
+	{
+		Ogre::SceneNode *node = static_cast<Ogre::SceneNode*>((*it)->getUserPointer());
+		tObject = *it;
+
+		btVector3 point = tObject->getCenterOfMassPosition();
+		node->setPosition(Ogre::Vector3((float)point[0],(float)point[1], (float)point[2]));
+
+		btQuaternion btq = tObject->getOrientation();
+		Ogre::Quaternion quart = Ogre::Quaternion(btq.w(),btq.x(),btq.y(),btq.z());
+
+		node->setOrientation(quart);
+	}
+}
+bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
+{
+	if(mWindow->isClosed())
+		return false;
+ 
+	if(mShutDown)
+		return false;
+ 
+	//Need to capture/update each device
+	mKeyboard->capture();
+	mMouse->capture();
+ 
+	mTrayMgr->frameRenderingQueued(evt);
+ 
+	if (!mTrayMgr->isDialogVisible())
+	{
+		mCameraMan->frameRenderingQueued(evt);   // if dialog isn't up, then update the camera
+		if (mDetailsPanel->isVisible())   // if details panel is visible, then update its contents
+		{
+			mDetailsPanel->setParamValue(0, Ogre::StringConverter::toString(mCamera->getDerivedPosition().x));
+			mDetailsPanel->setParamValue(1, Ogre::StringConverter::toString(mCamera->getDerivedPosition().y));
+			mDetailsPanel->setParamValue(2, Ogre::StringConverter::toString(mCamera->getDerivedPosition().z));
+			mDetailsPanel->setParamValue(4, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().w));
+			mDetailsPanel->setParamValue(5, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().x));
+			mDetailsPanel->setParamValue(6, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().y));
+			mDetailsPanel->setParamValue(7, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().z));
+		}
+	}
+	updatePhysics(16);
+	return true;
 }
 
 bool Application::setup()
