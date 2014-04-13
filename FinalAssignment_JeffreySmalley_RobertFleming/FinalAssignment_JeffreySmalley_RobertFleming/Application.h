@@ -47,6 +47,7 @@ protected:
 	void updatePhysics(unsigned int deltaTime);
 	virtual void createScene();
 	virtual void createCamera();
+	virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
 	//virtual void setupResources();
 	//virtual void createViewports();
 };
