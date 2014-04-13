@@ -49,54 +49,48 @@ void Application::createViewports()
 //-------------------------------------------------------------------------------------
 void Application::createRock(const btVector3 &Position, btScalar Mass)
 {
-	
-	for (int i=0;i<12;i++)
-	{
-		Ogre::Vector3 size = Ogre::Vector3::ZERO;
-		Ogre::Vector3 pos = Ogre::Vector3::ZERO;
+	Ogre::Vector3 size = Ogre::Vector3::ZERO;
+	Ogre::Vector3 pos = Ogre::Vector3::ZERO;
 
-		pos.x = Position.getX();
-		pos.y = Position.getY();
-		pos.z = Position.getZ();
+	pos.x = Position.getX();
+	pos.y = Position.getY();
+	pos.z = Position.getZ();
 
-		//Ogre::String number = Ogre::StringConverter::toString(i+1);
-		Ogre::Entity *rockEntity = mSceneMgr->createEntity("Rock "+Ogre::StringConverter::toString(m_pNumRocks), "rock.mesh");
-		rockEntity->setCastShadows(true);
-		//rockNode[i] = mSceneMgr->getRootSceneNode()->createChildSceneNode("RockNode "+ number,Ogre::Vector3(0,1,170));
-		Ogre::AxisAlignedBox boundingBox = rockEntity->getBoundingBox();
-		size = boundingBox.getSize()*0.95f;
+	//Ogre::String number = Ogre::StringConverter::toString(i+1);
+	Ogre::Entity *rockEntity = mSceneMgr->createEntity("Rock "+Ogre::StringConverter::toString(m_pNumRocks), "rock.mesh");
+	rockEntity->setCastShadows(true);
+	//rockNode[i] = mSceneMgr->getRootSceneNode()->createChildSceneNode("RockNode "+ number,Ogre::Vector3(0,1,170));
+	Ogre::AxisAlignedBox boundingBox = rockEntity->getBoundingBox();
+	size = boundingBox.getSize()*0.95f;
 		
-		//rockNode[i]->attachObject(rockEntity[i]);
-		rockEntity->setMaterialName("RedRockMaterial");
-		Ogre::SceneNode *rockNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-		rockNode->scale(1.5,1.5,1.5);
-		rockNode->pitch(Ogre::Degree(90));
-		rockNode->attachObject(rockEntity);
-		rockNode->setPosition(pos);
+	//rockNode[i]->attachObject(rockEntity[i]);
+	rockEntity->setMaterialName("RedRockMaterial");
+	Ogre::SceneNode *rockNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	rockNode->scale(1.5,1.5,1.5);
+	//rockNode->pitch(Ogre::Degree(90));
+	rockNode->attachObject(rockEntity);
+	rockNode->setPosition(pos);
 
-		btTransform Transform;
-		Transform.setIdentity();
-		Transform.setOrigin(Position);
+	btTransform Transform;
+	Transform.setIdentity();
+	Transform.setOrigin(Position);
 
-		btDefaultMotionState *MotionState = new btDefaultMotionState(Transform);
+	btDefaultMotionState *MotionState = new btDefaultMotionState(Transform);
 
-		btVector3 HalfExtents(size.x*0.5f,size.y*0.5f,size.z*0.5f);
-		btCollisionShape *Shape = new btBoxShape(HalfExtents);
+	btVector3 HalfExtents(size.x*0.5f,size.y*0.5f,size.z*0.5f);
+	btCollisionShape *Shape = new btBoxShape(HalfExtents);
 
-		btVector3 localInertia;
-		Shape->calculateLocalInertia(Mass, localInertia);
+	btVector3 localInertia;
+	Shape->calculateLocalInertia(Mass, localInertia);
 
-		btRigidBody *RigidBody = new btRigidBody(Mass, MotionState, Shape, localInertia);
+	btRigidBody *RigidBody = new btRigidBody(Mass, MotionState, Shape, localInertia);
 		
-		RigidBody->setUserPointer((void*)(rockNode));
+	RigidBody->setUserPointer((void*)(rockNode));
+	dynamicsWorld->addRigidBody(RigidBody);
 
-		dynamicsWorld->addRigidBody(RigidBody);
+	Rocks.push_back(RigidBody);
 
-		Rocks.push_back(RigidBody);
-
-		m_pNumRocks++;
-	}
-	
+	m_pNumRocks++;
 }
 
 void Application::createScene()
@@ -167,8 +161,7 @@ void Application::createScene()
 	//Ogre::Entity *rockEntity[24];//= mSceneMgr->createEntity("Rock", "rock.mesh");
 	//Ogre::SceneNode *rockNode[24];//= mSceneMgr->getRootSceneNode()->createChildSceneNode("RockNode",Ogre::Vector3(0,1,170));
 	
-	createRock(btVector3(0,2,180),1);
-
+	createRock(btVector3(0,5,180),1);
 	for (int i=12;i<24;i++)
 	{
 		//rockEntity[i] = mSceneMgr->createEntity("Rock"+i, "rock.mesh");
@@ -226,7 +219,7 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
 			mDetailsPanel->setParamValue(7, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().z));
 		}
 	}
-	updatePhysics(60);
+	updatePhysics(16);
 	return true;
 }
 
