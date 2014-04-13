@@ -47,7 +47,7 @@ void Application::createViewports()
 }
 */
 //-------------------------------------------------------------------------------------
-void Application::createRock(const btVector3 &Position, btScalar Mass)
+void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::String material)
 {
 	Ogre::Vector3 size = Ogre::Vector3::ZERO;
 	Ogre::Vector3 pos = Ogre::Vector3::ZERO;
@@ -64,7 +64,7 @@ void Application::createRock(const btVector3 &Position, btScalar Mass)
 	size = boundingBox.getSize()*0.95f;
 		
 	//rockNode[i]->attachObject(rockEntity[i]);
-	rockEntity->setMaterialName("RedRockMaterial");
+	rockEntity->setMaterialName(material);
 	Ogre::SceneNode *rockNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 	rockNode->scale(1.5,1.5,1.5);
 	//rockNode->pitch(Ogre::Degree(90));
@@ -161,7 +161,38 @@ void Application::createScene()
 	//Ogre::Entity *rockEntity[24];//= mSceneMgr->createEntity("Rock", "rock.mesh");
 	//Ogre::SceneNode *rockNode[24];//= mSceneMgr->getRootSceneNode()->createChildSceneNode("RockNode",Ogre::Vector3(0,1,170));
 	
-	createRock(btVector3(0,5,180),1);
+	createRock(btVector3(-5,5,200),1,"RedRockMaterial");
+	createRock(btVector3(-10,5,200),1,"RedRockMaterial");
+	createRock(btVector3(-15,5,200),1,"RedRockMaterial");
+
+	createRock(btVector3(-5,5,205),1,"RedRockMaterial");
+	createRock(btVector3(-10,5,205),1,"RedRockMaterial");
+	createRock(btVector3(-15,5,205),1,"RedRockMaterial");
+
+	createRock(btVector3(-5,5,210),1,"RedRockMaterial");
+	createRock(btVector3(-10,5,210),1,"RedRockMaterial");
+	createRock(btVector3(-15,5,210),1,"RedRockMaterial");
+
+	createRock(btVector3(-5,5,215),1,"RedRockMaterial");
+	createRock(btVector3(-10,5,215),1,"RedRockMaterial");
+	createRock(btVector3(-15,5,215),1,"RedRockMaterial");
+
+
+	createRock(btVector3(5,5,200),1,"YellowRockMaterial");
+	createRock(btVector3(10,5,200),1,"YellowRockMaterial");
+	createRock(btVector3(15,5,200),1,"YellowRockMaterial");
+
+	createRock(btVector3(5,5,205),1,"YellowRockMaterial");
+	createRock(btVector3(10,5,205),1,"YellowRockMaterial");
+	createRock(btVector3(15,5,205),1,"YellowRockMaterial");
+
+	createRock(btVector3(5,5,210),1,"YellowRockMaterial");
+	createRock(btVector3(10,5,210),1,"YellowRockMaterial");
+	createRock(btVector3(15,5,210),1,"YellowRockMaterial");
+
+	createRock(btVector3(5,5,215),1,"YellowRockMaterial");
+	createRock(btVector3(10,5,215),1,"YellowRockMaterial");
+	createRock(btVector3(15,5,215),1,"YellowRockMaterial");
 	for (int i=12;i<24;i++)
 	{
 		//rockEntity[i] = mSceneMgr->createEntity("Rock"+i, "rock.mesh");

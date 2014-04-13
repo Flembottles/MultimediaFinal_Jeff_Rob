@@ -43,7 +43,7 @@ protected:
 	btRigidBody* physicsAccessors;
 	
 	virtual bool setup();
-	void createRock(const btVector3 &Position, btScalar Mass);
+	void createRock(const btVector3 &Position, btScalar Mass,Ogre::String material);
 	void updatePhysics(unsigned int deltaTime);
 	virtual void createScene();
 	virtual void createCamera();
