@@ -92,10 +92,13 @@
   <ItemGroup>
     <ClInclude Include="BaseApplication.h" />
     <ClInclude Include="Application.h" />
+    <ClInclude Include="DebugDrawer.h" />
+    <ClInclude Include="OgreBulletUtil.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseApplication.cpp" />
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="DebugDrawer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

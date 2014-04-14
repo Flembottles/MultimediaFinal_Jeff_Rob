@@ -41,6 +41,8 @@ protected:
 	btCollisionShape* collisionShape;
 
 	btRigidBody* physicsAccessors;
+
+	btIDebugDraw* mDebugDrawer;
 	
 	virtual bool setup();
 	void createRock(const btVector3 &Position, btScalar Mass,Ogre::String material);

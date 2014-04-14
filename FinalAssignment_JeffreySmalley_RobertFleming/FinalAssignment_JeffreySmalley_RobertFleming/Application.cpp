@@ -201,6 +201,9 @@ void Application::createScene()
 		//rockNode[i]->attachObject(rockEntity[i]);
 		//rockEntity[i]->setMaterialName("YellowRockMaterial");
 	}
+	mDebugDrawer = new OgreDebugDrawer( mSceneMgr );
+    mDebugDrawer->setDebugMode( btIDebugDraw::DBG_DrawWireframe );
+    dynamicsWorld->setDebugDrawer( mDebugDrawer );
 }
 void Application::updatePhysics(unsigned int deltaTime)
 {

@@ -46,6 +46,9 @@ This source file is part of the
  
 #  include <SdkTrays.h>
 #  include <SdkCameraMan.h>
+
+#include <assert.h>
+#include "DebugDrawer.h"
 #endif
  
 #ifdef OGRE_STATIC_LIB
