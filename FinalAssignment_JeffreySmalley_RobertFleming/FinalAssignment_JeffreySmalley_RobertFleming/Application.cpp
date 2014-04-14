@@ -16,9 +16,16 @@ This source file is part of the
 */
 #include "Application.h"
 
+enum gameStateList{THROW,THROWN,HOUSE,REST};
+gameStateList gameState;
+
 Ogre::Vector3 throwCamera = Ogre::Vector3(0,8,213),
 	followCamera,
 	houseCamera;
+
+Ogre::Vector3 throwCameraLook = Ogre::Vector3(0,8,213),
+	followCameraLook,
+	houseCameraLook;
 
 //-------------------------------------------------------------------------------------
 Application::Application(void)
@@ -93,7 +100,7 @@ void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::Stri
 		
 	RigidBody->setUserPointer((void*)(rockNode));
 	RigidBody->setRestitution(1);
-	RigidBody->setDamping(0, 0);
+
 	dynamicsWorld->addRigidBody(RigidBody);
 
 	Rocks.push_back(RigidBody);
@@ -227,9 +234,6 @@ void Application::createScene()
 	//perfect ice friction
 	groundRigidBody->setFriction(0.02681);
 
-	/*transform = Rocks[12]-> getCenterOfMassTransform();
-	transform.setOrigin(btVector3(0,1,150));
-	Rocks[12] -> setCenterOfMassTransform(transform);*/
 }
 void Application::updatePhysics(unsigned int deltaTime)
 {
@@ -279,6 +283,7 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
 			mDetailsPanel->setParamValue(7, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().z));
 		}
 	}
+
 	updatePhysics(16);
 
 	return true;
@@ -326,6 +331,119 @@ bool Application::setup()
  
 	return true;
 }
+
+bool Application::mouseMoved( const OIS::MouseEvent &arg )
+{
+	if (mTrayMgr->injectMouseMove(arg)) return true;
+	mCameraMan->injectMouseMove(arg);
+	return true;
+}
+bool Application::keyPressed( const OIS::KeyEvent &arg )
+{
+	if (mTrayMgr->isDialogVisible()) return true;   // don't process any more keys if dialog is up
+ 
+	if (arg.key == OIS::KC_F)   // toggle visibility of advanced frame stats
+	{
+		mTrayMgr->toggleAdvancedFrameStats();
+	}
+	else if (arg.key == OIS::KC_G)   // toggle visibility of even rarer debugging details
+	{
+		if (mDetailsPanel->getTrayLocation() == OgreBites::TL_NONE)
+		{
+			mTrayMgr->moveWidgetToTray(mDetailsPanel, OgreBites::TL_TOPRIGHT, 0);
+			mDetailsPanel->show();
+		}
+		else
+		{
+			mTrayMgr->removeWidgetFromTray(mDetailsPanel);
+			mDetailsPanel->hide();
+		}
+	}
+	/*
+	else if (arg.key == OIS::KC_T)   // cycle polygon rendering mode
+	{
+		Ogre::String newVal;
+		Ogre::TextureFilterOptions tfo;
+		unsigned int aniso;
+ 
+		switch (mDetailsPanel->getParamValue(9).asUTF8()[0])
+		{
+		case 'B':
+			newVal = "Trilinear";
+			tfo = Ogre::TFO_TRILINEAR;
+			aniso = 1;
+			break;
+		case 'T':
+			newVal = "Anisotropic";
+			tfo = Ogre::TFO_ANISOTROPIC;
+			aniso = 8;
+			break;
+		case 'A':
+			newVal = "None";
+			tfo = Ogre::TFO_NONE;
+			aniso = 1;
+			break;
+		default:
+			newVal = "Bilinear";
+			tfo = Ogre::TFO_BILINEAR;
+			aniso = 1;
+		}
+ 
+		Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(tfo);
+		Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(aniso);
+		mDetailsPanel->setParamValue(9, newVal);
+	}
+	*/
+	else if (arg.key == OIS::KC_R)   // cycle polygon rendering mode
+	{
+		Ogre::String newVal;
+		Ogre::PolygonMode pm;
+ 
+		switch (mCamera->getPolygonMode())
+		{
+		case Ogre::PM_SOLID:
+			newVal = "Wireframe";
+			pm = Ogre::PM_WIREFRAME;
+			break;
+		case Ogre::PM_WIREFRAME:
+			newVal = "Points";
+			pm = Ogre::PM_POINTS;
+			break;
+		default:
+			newVal = "Solid";
+			pm = Ogre::PM_SOLID;
+		}
+ 
+		mCamera->setPolygonMode(pm);
+		mDetailsPanel->setParamValue(10, newVal);
+	}
+	else if(arg.key == OIS::KC_F5)   // refresh all textures
+	{
+		Ogre::TextureManager::getSingleton().reloadAll();
+	}
+	else if (arg.key == OIS::KC_SYSRQ)   // take a screenshot
+	{
+		mWindow->writeContentsToTimestampedFile("screenshot", ".jpg");
+	}
+	else if (arg.key == OIS::KC_ESCAPE)
+	{
+		mShutDown = true;
+	}
+	else if (arg.key == OIS::KC_1)
+	{
+
+	}
+ 
+	mCameraMan->injectKeyDown(arg);
+	return true;
+}
+ 
+bool Application::keyReleased( const OIS::KeyEvent &arg )
+{
+	mCameraMan->injectKeyUp(arg);
+	return true;
+}
+
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 #define WIN32_LEAN_AND_MEAN
