@@ -93,6 +93,7 @@ void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::Stri
 		
 	RigidBody->setUserPointer((void*)(rockNode));
 	RigidBody->setRestitution(1);
+	RigidBody->setDamping(0, 0);
 	dynamicsWorld->addRigidBody(RigidBody);
 
 	Rocks.push_back(RigidBody);
@@ -190,10 +191,10 @@ void Application::createScene()
 	
 
 
-	createRock(btVector3(11,5,221),1,"YellowRockMaterial");
 	createRock(btVector3(11,5,215),1,"YellowRockMaterial");
 	createRock(btVector3(11,5,218),1,"YellowRockMaterial");
-
+	createRock(btVector3(11,5,221),1,"YellowRockMaterial");
+	
 	createRock(btVector3(14,5,215),1,"YellowRockMaterial");
 	createRock(btVector3(14,5,218),1,"YellowRockMaterial");
 	createRock(btVector3(14,5,221),1,"YellowRockMaterial");
@@ -224,11 +225,11 @@ void Application::createScene()
 	//activates the rock for motion
 	Rocks[1]->activate(true);
 	//perfect ice friction
-	groundRigidBody->setFriction(0.02647);
+	groundRigidBody->setFriction(0.02681);
 
-	transform = Rocks[12]-> getCenterOfMassTransform();
+	/*transform = Rocks[12]-> getCenterOfMassTransform();
 	transform.setOrigin(btVector3(0,1,150));
-	Rocks[12] -> setCenterOfMassTransform(transform);
+	Rocks[12] -> setCenterOfMassTransform(transform);*/
 }
 void Application::updatePhysics(unsigned int deltaTime)
 {
