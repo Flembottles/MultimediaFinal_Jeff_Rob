@@ -51,12 +51,7 @@ void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::Stri
 {
 	Ogre::Vector3 size = Ogre::Vector3::ZERO;
 	Ogre::Vector3 pos = Ogre::Vector3::ZERO;
-	btVector3 change;
-	change = Position;
-	change.setY(size.y*0.5f);
-	pos.x = Position.getX();
-	pos.y = Position.getY();
-	pos.z = Position.getZ();
+	
 
 	//Ogre::String number = Ogre::StringConverter::toString(i+1);
 	Ogre::Entity *rockEntity = mSceneMgr->createEntity("Rock "+Ogre::StringConverter::toString(m_pNumRocks), "rock.mesh");
@@ -64,7 +59,12 @@ void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::Stri
 	//rockNode[i] = mSceneMgr->getRootSceneNode()->createChildSceneNode("RockNode "+ number,Ogre::Vector3(0,1,170));
 	Ogre::AxisAlignedBox boundingBox = rockEntity->getBoundingBox();
 	size = boundingBox.getSize()*0.95f;
-		
+	btVector3 change;
+	change = Position;
+	change.setY(size.y*0.5f);
+	pos.x = Position.getX();
+	pos.y = Position.getY();
+	pos.z = Position.getZ();
 	//rockNode[i]->attachObject(rockEntity[i]);
 	rockEntity->setMaterialName(material);
 	Ogre::SceneNode *rockNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
@@ -184,6 +184,7 @@ void Application::createScene()
 	createRock(btVector3(-20,5,221),1,"RedRockMaterial");
 	
 
+
 	createRock(btVector3(11,5,221),1,"YellowRockMaterial");
 	createRock(btVector3(11,5,215),1,"YellowRockMaterial");
 	createRock(btVector3(11,5,218),1,"YellowRockMaterial");
@@ -205,9 +206,24 @@ void Application::createScene()
 	mDebugDrawer = new OgreDebugDrawer( mSceneMgr );
     mDebugDrawer->setDebugMode( btIDebugDraw::DBG_DrawWireframe );
     dynamicsWorld->setDebugDrawer( mDebugDrawer );
+
+	// code to set rock position 0-11 red, 12-23 yellow
+	btTransform transform = Rocks[1]-> getCenterOfMassTransform();
+	transform.setOrigin(btVector3(0,1,200));
+	Rocks[1] -> setCenterOfMassTransform(transform);
+	// how to throw a rock, 10 with no spin is a button shot
+	Rocks[1]->applyCentralImpulse(btVector3(0,0,-10));
+	//does not curve the rock, but does make it go futher
+	Rocks[1]->applyTorqueImpulse(btVector3(0,1,0));
+
+	//activates the rock for motion
+	Rocks[1]->activate(true);
+	//perfect ice friction
+	groundRigidBody->setFriction(0.02647);
 }
 void Application::updatePhysics(unsigned int deltaTime)
 {
+	
 	dynamicsWorld->stepSimulation(deltaTime * 0.001f, 60);
 	btRigidBody *tObject;
 
@@ -254,11 +270,6 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
 		}
 	}
 	updatePhysics(16);
-
-	// code to set rock position 0-11 red, 12-23 yellow
-	/* btTransform transform = Rocks[1]-> getCenterOfMassTransform();
-	transform.setOrigin(btVector3(0,20,0));
-	Rocks[1] -> setCenterOfMassTransform(transform);*/
 
 	return true;
 }
