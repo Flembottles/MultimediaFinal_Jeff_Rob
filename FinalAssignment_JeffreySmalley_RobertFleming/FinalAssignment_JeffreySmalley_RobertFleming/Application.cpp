@@ -92,6 +92,7 @@ void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::Stri
 	btRigidBody *RigidBody = new btRigidBody(Mass, MotionState, Shape, localInertia);
 		
 	RigidBody->setUserPointer((void*)(rockNode));
+	RigidBody->setRestitution(1);
 	dynamicsWorld->addRigidBody(RigidBody);
 
 	Rocks.push_back(RigidBody);
@@ -216,14 +217,18 @@ void Application::createScene()
 	transform.setOrigin(btVector3(0,1,195));
 	Rocks[1] -> setCenterOfMassTransform(transform);
 	// how to throw a rock, 10 with no spin is a button shot
-	//Rocks[1]->applyCentralImpulse(btVector3(0,0,-10));
+	Rocks[1]->setLinearVelocity(btVector3(0,0,-10));
 	//does not curve the rock, but does make it go futher
-	//Rocks[1]->applyTorqueImpulse(btVector3(0,1,0));
+	//Rocks[1]->setAngularVelocity(btVector3(0,1,0));
 
 	//activates the rock for motion
 	Rocks[1]->activate(true);
 	//perfect ice friction
 	groundRigidBody->setFriction(0.02647);
+
+	transform = Rocks[12]-> getCenterOfMassTransform();
+	transform.setOrigin(btVector3(0,1,150));
+	Rocks[12] -> setCenterOfMassTransform(transform);
 }
 void Application::updatePhysics(unsigned int deltaTime)
 {
