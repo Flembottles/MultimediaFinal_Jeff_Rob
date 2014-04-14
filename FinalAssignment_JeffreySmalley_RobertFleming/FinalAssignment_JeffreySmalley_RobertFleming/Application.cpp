@@ -209,12 +209,12 @@ void Application::createScene()
 
 	// code to set rock position 0-11 red, 12-23 yellow
 	btTransform transform = Rocks[1]-> getCenterOfMassTransform();
-	transform.setOrigin(btVector3(0,1,200));
+	transform.setOrigin(btVector3(0,1,195));
 	Rocks[1] -> setCenterOfMassTransform(transform);
 	// how to throw a rock, 10 with no spin is a button shot
-	Rocks[1]->applyCentralImpulse(btVector3(0,0,-10));
+	//Rocks[1]->applyCentralImpulse(btVector3(0,0,-10));
 	//does not curve the rock, but does make it go futher
-	Rocks[1]->applyTorqueImpulse(btVector3(0,1,0));
+	//Rocks[1]->applyTorqueImpulse(btVector3(0,1,0));
 
 	//activates the rock for motion
 	Rocks[1]->activate(true);
