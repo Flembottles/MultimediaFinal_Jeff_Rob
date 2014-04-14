@@ -26,6 +26,9 @@ public:
 protected:
 	int m_pNumRocks;
 
+	int currentRock;
+	int rockOp;
+
 	std::vector<btRigidBody*> Rocks;
 	
 	btDefaultCollisionConfiguration* collisionConfiguraton;
@@ -46,6 +49,7 @@ protected:
 	
 	virtual bool setup();
 	void createRock(const btVector3 &Position, btScalar Mass,Ogre::String material);
+	void startRock(int startNum);
 	void updatePhysics(unsigned int deltaTime);
 	virtual void createScene();
 	virtual void createCamera();

@@ -51,7 +51,9 @@ void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::Stri
 {
 	Ogre::Vector3 size = Ogre::Vector3::ZERO;
 	Ogre::Vector3 pos = Ogre::Vector3::ZERO;
-
+	btVector3 change;
+	change = Position;
+	change.setY(size.y*0.5f);
 	pos.x = Position.getX();
 	pos.y = Position.getY();
 	pos.z = Position.getZ();
@@ -73,7 +75,7 @@ void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::Stri
 
 	btTransform Transform;
 	Transform.setIdentity();
-	Transform.setOrigin(Position);
+	Transform.setOrigin(change);
 
 	btDefaultMotionState *MotionState = new btDefaultMotionState(Transform);
 
@@ -93,6 +95,10 @@ void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::Stri
 	m_pNumRocks++;
 }
 
+void Application::startRock(int startNum)
+{
+	currentRock = startNum;
+}
 void Application::createScene()
 {
 	Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_ANISOTROPIC);
@@ -160,47 +166,42 @@ void Application::createScene()
 
 	//Ogre::Entity *rockEntity[24];//= mSceneMgr->createEntity("Rock", "rock.mesh");
 	//Ogre::SceneNode *rockNode[24];//= mSceneMgr->getRootSceneNode()->createChildSceneNode("RockNode",Ogre::Vector3(0,1,170));
-	
-	createRock(btVector3(-20,5,221),1,"RedRockMaterial");
-	createRock(btVector3(-17,5,221),1,"RedRockMaterial");
-	createRock(btVector3(-14,5,221),1,"RedRockMaterial");
+	m_pNumRocks = 0;
+	createRock(btVector3(-11,5,215),1,"RedRockMaterial");
+	createRock(btVector3(-11,5,218),1,"RedRockMaterial");
 	createRock(btVector3(-11,5,221),1,"RedRockMaterial");
 
-	createRock(btVector3(-20,5,218),1,"RedRockMaterial");
-	createRock(btVector3(-17,5,218),1,"RedRockMaterial");
-	createRock(btVector3(-14,5,218),1,"RedRockMaterial");
-	createRock(btVector3(-11,5,218),1,"RedRockMaterial");
-
-	
-	createRock(btVector3(-20,5,215),1,"RedRockMaterial");
-	createRock(btVector3(-17,5,215),1,"RedRockMaterial");
 	createRock(btVector3(-14,5,215),1,"RedRockMaterial");
-	createRock(btVector3(-11,5,215),1,"RedRockMaterial");
+	createRock(btVector3(-14,5,218),1,"RedRockMaterial");
+	createRock(btVector3(-14,5,221),1,"RedRockMaterial");
 
+	createRock(btVector3(-17,5,215),1,"RedRockMaterial");
+	createRock(btVector3(-17,5,218),1,"RedRockMaterial");
+	createRock(btVector3(-17,5,221),1,"RedRockMaterial");
 
-	createRock(btVector3(20,5,221),1,"YellowRockMaterial");
-	createRock(btVector3(17,5,221),1,"YellowRockMaterial");
-	createRock(btVector3(14,5,221),1,"YellowRockMaterial");
+	createRock(btVector3(-20,5,215),1,"RedRockMaterial");
+	createRock(btVector3(-20,5,218),1,"RedRockMaterial");
+	createRock(btVector3(-20,5,221),1,"RedRockMaterial");
+	
+
 	createRock(btVector3(11,5,221),1,"YellowRockMaterial");
-
-	createRock(btVector3(20,5,218),1,"YellowRockMaterial");
-	createRock(btVector3(17,5,218),1,"YellowRockMaterial");
-	createRock(btVector3(14,5,218),1,"YellowRockMaterial");
+	createRock(btVector3(11,5,215),1,"YellowRockMaterial");
 	createRock(btVector3(11,5,218),1,"YellowRockMaterial");
 
-	createRock(btVector3(20,5,215),1,"YellowRockMaterial");
-	createRock(btVector3(17,5,215),1,"YellowRockMaterial");
 	createRock(btVector3(14,5,215),1,"YellowRockMaterial");
-	createRock(btVector3(11,5,215),1,"YellowRockMaterial");
-	for (int i=12;i<24;i++)
-	{
-		//rockEntity[i] = mSceneMgr->createEntity("Rock"+i, "rock.mesh");
-		//rockNode[i] = mSceneMgr->getRootSceneNode()->createChildSceneNode("RockNode"+i,Ogre::Vector3(0,1,170));
-		//rockNode[i]->scale(1.5,1.5,1.5);
-		//rockNode[i]->pitch(Ogre::Degree(90));
-		//rockNode[i]->attachObject(rockEntity[i]);
-		//rockEntity[i]->setMaterialName("YellowRockMaterial");
-	}
+	createRock(btVector3(14,5,218),1,"YellowRockMaterial");
+	createRock(btVector3(14,5,221),1,"YellowRockMaterial");
+
+	createRock(btVector3(17,5,215),1,"YellowRockMaterial");
+	createRock(btVector3(17,5,218),1,"YellowRockMaterial");
+	createRock(btVector3(17,5,221),1,"YellowRockMaterial");
+
+	createRock(btVector3(20,5,215),1,"YellowRockMaterial");
+	createRock(btVector3(20,5,218),1,"YellowRockMaterial");
+	createRock(btVector3(20,5,221),1,"YellowRockMaterial");
+	
+	rockOp = 12;
+
 	mDebugDrawer = new OgreDebugDrawer( mSceneMgr );
     mDebugDrawer->setDebugMode( btIDebugDraw::DBG_DrawWireframe );
     dynamicsWorld->setDebugDrawer( mDebugDrawer );
@@ -253,6 +254,12 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
 		}
 	}
 	updatePhysics(16);
+
+	// code to set rock position 0-11 red, 12-23 yellow
+	/* btTransform transform = Rocks[1]-> getCenterOfMassTransform();
+	transform.setOrigin(btVector3(0,20,0));
+	Rocks[1] -> setCenterOfMassTransform(transform);*/
+
 	return true;
 }
 
