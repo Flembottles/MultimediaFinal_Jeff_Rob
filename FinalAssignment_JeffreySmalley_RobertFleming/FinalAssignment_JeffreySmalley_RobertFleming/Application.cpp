@@ -21,11 +21,11 @@ gameStateList gameState;
 
 Ogre::Vector3 throwCamera = Ogre::Vector3(0,8,213),
 	followCamera,
-	houseCamera;
+	houseCamera = Ogre::Vector3(0,65,-160);
 
-Ogre::Vector3 throwCameraLook = Ogre::Vector3(0,8,213),
+Ogre::Quaternion throwCameraLook = Ogre::Quaternion(1.0,-0.02, 0.0, 0.0),
 	followCameraLook,
-	houseCameraLook;
+	houseCameraLook = Ogre::Quaternion(0.50,-0.50,0.50,0.50);
 
 //-------------------------------------------------------------------------------------
 Application::Application(void)
@@ -43,7 +43,7 @@ void Application::createCamera()
 {
 	mCamera = mSceneMgr->createCamera("PlayerCam");
 	mCamera->setPosition(throwCamera);
-	mCamera->lookAt(Ogre::Vector3(0,0,0));
+	mCamera->lookAt(Ogre::Vector3(0,0,16));
 	mCamera->setNearClipDistance(5);
 
 	//Create a camera controller (SdkCameraMan)
@@ -432,9 +432,17 @@ bool Application::keyPressed( const OIS::KeyEvent &arg )
 	{
 		mShutDown = true;
 	}
+	// Throw camera
 	else if (arg.key == OIS::KC_1)
 	{
-
+		mCamera->setPosition(throwCamera);
+		mCamera->setOrientation(throwCameraLook);
+	}
+	// House camera
+	else if (arg.key == OIS::KC_2)
+	{
+		mCamera->setPosition(houseCamera);
+		mCamera->setOrientation(houseCameraLook);
 	}
  
 	mCameraMan->injectKeyDown(arg);
