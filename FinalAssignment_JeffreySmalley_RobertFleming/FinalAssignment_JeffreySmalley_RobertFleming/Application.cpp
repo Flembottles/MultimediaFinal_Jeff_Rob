@@ -16,6 +16,10 @@ This source file is part of the
 */
 #include "Application.h"
 
+Ogre::Vector3 throwCamera = Ogre::Vector3(0,8,213),
+	followCamera,
+	houseCamera;
+
 //-------------------------------------------------------------------------------------
 Application::Application(void)
 {
@@ -31,7 +35,7 @@ Application::~Application(void)
 void Application::createCamera()
 {
 	mCamera = mSceneMgr->createCamera("PlayerCam");
-	mCamera->setPosition(Ogre::Vector3(0,15,300));
+	mCamera->setPosition(throwCamera);
 	mCamera->lookAt(Ogre::Vector3(0,0,0));
 	mCamera->setNearClipDistance(5);
 
