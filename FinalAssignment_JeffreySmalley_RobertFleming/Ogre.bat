@@ -1,0 +1,1 @@
+setx OGRE_HOME "C:\OgreSDK_vc11_v1-9-0"
