@@ -54,6 +54,9 @@ protected:
 	virtual void createScene();
 	virtual void createCamera();
 	virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+	virtual bool keyPressed( const OIS::KeyEvent &arg );
+	virtual bool keyReleased( const OIS::KeyEvent &arg );
+	virtual bool mouseMoved( const OIS::MouseEvent &arg );
 	//virtual void setupResources();
 	//virtual void createViewports();
 };
