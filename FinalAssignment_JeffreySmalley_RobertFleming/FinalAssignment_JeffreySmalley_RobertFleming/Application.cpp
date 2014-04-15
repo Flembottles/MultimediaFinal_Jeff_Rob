@@ -407,7 +407,7 @@ bool Application::setup()
 	}
 
 	countToNextThrow = nextThrowSet;
-	power = 0;
+	power = 10;
 	angle = 0;
 
 	return true;
@@ -526,7 +526,7 @@ bool Application::keyPressed( const OIS::KeyEvent &arg )
 	{
 		if (gameState == THROW)
 		{
-			power = 10;
+			//power = 10;
 			float angleR = angle*(3.14159265359/180);
 			zPow= power*cos(angleR);
 			xPow = power*sin(angleR);
