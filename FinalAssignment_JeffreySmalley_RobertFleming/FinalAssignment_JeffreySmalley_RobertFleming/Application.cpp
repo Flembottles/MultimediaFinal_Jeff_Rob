@@ -83,7 +83,7 @@ void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::Stri
 	//rockNode->pitch(Ogre::Degree(90));
 	rockNode->attachObject(rockEntity);
 	rockNode->setPosition(pos);
-
+	rockNodes.push_back(rockNode);
 	btTransform Transform;
 	Transform.setIdentity();
 	Transform.setOrigin(change);
@@ -100,7 +100,11 @@ void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::Stri
 		
 	RigidBody->setUserPointer((void*)(rockNode));
 	RigidBody->setRestitution(1);
+<<<<<<< HEAD
 	RigidBody->setDamping(0, 0);
+=======
+
+>>>>>>> origin/JeffBranch
 	dynamicsWorld->addRigidBody(RigidBody);
 
 	Rocks.push_back(RigidBody);
@@ -234,9 +238,12 @@ void Application::createScene()
 	//perfect ice friction
 	groundRigidBody->setFriction(0.02681);
 
+<<<<<<< HEAD
 	/*transform = Rocks[12]-> getCenterOfMassTransform();
 	transform.setOrigin(btVector3(0,1,150));
 	Rocks[12] -> setCenterOfMassTransform(transform);*/
+=======
+>>>>>>> origin/JeffBranch
 }
 void Application::updatePhysics(unsigned int deltaTime)
 {
@@ -260,6 +267,7 @@ void Application::updatePhysics(unsigned int deltaTime)
 }
 bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
+
 	if(mWindow->isClosed())
 		return false;
  
@@ -286,10 +294,8 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
 			mDetailsPanel->setParamValue(7, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().z));
 		}
 	}
-
 	updatePhysics(16);
 
-	return true;
 }
 
 bool Application::setup()

@@ -29,6 +29,8 @@ protected:
 	int currentRock;
 	int rockOp;
 
+	std::vector<Ogre::SceneNode*> rockNodes;
+
 	std::vector<btRigidBody*> Rocks;
 	
 	btDefaultCollisionConfiguration* collisionConfiguraton;
