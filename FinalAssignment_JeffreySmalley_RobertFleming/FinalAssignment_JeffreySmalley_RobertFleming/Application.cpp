@@ -100,11 +100,7 @@ void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::Stri
 		
 	RigidBody->setUserPointer((void*)(rockNode));
 	RigidBody->setRestitution(1);
-<<<<<<< HEAD
-	RigidBody->setDamping(0, 0);
-=======
 
->>>>>>> origin/JeffBranch
 	dynamicsWorld->addRigidBody(RigidBody);
 
 	Rocks.push_back(RigidBody);
@@ -238,12 +234,10 @@ void Application::createScene()
 	//perfect ice friction
 	groundRigidBody->setFriction(0.02681);
 
-<<<<<<< HEAD
 	/*transform = Rocks[12]-> getCenterOfMassTransform();
 	transform.setOrigin(btVector3(0,1,150));
 	Rocks[12] -> setCenterOfMassTransform(transform);*/
-=======
->>>>>>> origin/JeffBranch
+
 }
 void Application::updatePhysics(unsigned int deltaTime)
 {
