@@ -15,8 +15,8 @@ This source file is part of the
 -----------------------------------------------------------------------------
 */
 #include "Application.h"
-
-enum gameStateList{THROW,THROWN,HOUSE,REST};
+#include <OgreMath.h>
+enum gameStateList{START_ROUND,THROW,THROWN,HOUSE,REST};
 gameStateList gameState;
 
 Ogre::Vector3 throwCamera = Ogre::Vector3(0,8,213),
@@ -108,9 +108,16 @@ void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::Stri
 	m_pNumRocks++;
 }
 
-void Application::startRock(int startNum)
+void Application::startRock(bool red)
 {
-	currentRock = startNum;
+	if (red)
+	{
+		currentRock=0;
+	}
+	else
+	{
+		currentRock=12;
+	}
 }
 void Application::createScene()
 {
@@ -220,19 +227,17 @@ void Application::createScene()
     mDebugDrawer->setDebugMode( btIDebugDraw::DBG_DrawWireframe );
     dynamicsWorld->setDebugDrawer( mDebugDrawer );
 
-	// code to set rock position 0-11 red, 12-23 yellow
-	btTransform transform = Rocks[1]-> getCenterOfMassTransform();
-	transform.setOrigin(btVector3(0,1,195));
-	Rocks[1] -> setCenterOfMassTransform(transform);
+	
 	// how to throw a rock, 10 with no spin is a button shot
-	Rocks[1]->setLinearVelocity(btVector3(0,0,-10));
+	//Rocks[1]->setLinearVelocity(btVector3(0,0,-10));
 	//does not curve the rock, but does make it go futher
 	//Rocks[1]->setAngularVelocity(btVector3(0,1,0));
 
 	//activates the rock for motion
-	Rocks[1]->activate(true);
+	//Rocks[1]->activate(true);
 	//perfect ice friction
 	groundRigidBody->setFriction(0.02681);
+	gameState = THROW;
 
 	/*transform = Rocks[12]-> getCenterOfMassTransform();
 	transform.setOrigin(btVector3(0,1,150));
@@ -268,6 +273,25 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
 	if(mShutDown)
 		return false;
  
+
+	switch(gameState)
+	{
+	case START_ROUND:
+		redTeamStart=!redTeamStart;
+		startRock(redTeamStart);
+		break;
+	case THROW:
+		break;
+	case THROWN:
+		break;
+	case HOUSE:
+		break;
+	case REST:
+		nextRock();
+		setRock();
+		break;
+
+	}
 	//Need to capture/update each device
 	mKeyboard->capture();
 	mMouse->capture();
@@ -289,11 +313,14 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
 		}
 	}
 	updatePhysics(16);
+	
+
 	return true;
 }
 
 bool Application::setup()
 {
+	srand(time(NULL));
 	mRoot = new Ogre::Root(mPluginsCfg);
  
 	setupResources();
@@ -332,6 +359,21 @@ bool Application::setup()
  
 	createFrameListener();
  
+	rocksThrown = 0;
+	int random;
+	random =rand()%2-1;
+	if (random ==0)
+	{
+		redTeamStart=true;
+		startRock(true);
+		setRock();
+	}
+	else
+	{
+		redTeamStart=false;
+		startRock(false);
+		setRock();
+	}
 	return true;
 }
 
@@ -453,6 +495,24 @@ bool Application::keyReleased( const OIS::KeyEvent &arg )
 {
 	mCameraMan->injectKeyUp(arg);
 	return true;
+}
+
+
+void Application::nextRock()
+{
+	currentRock+= rockOp;
+	if (currentRock>=rockOp*2)
+	{
+		currentRock-=rockOp*2;
+	}
+	gameState = THROW;
+}
+void Application::setRock()
+{
+	// code to set rock position 0-11 red, 12-23 yellow
+	btTransform transform = Rocks[currentRock]-> getCenterOfMassTransform();
+	transform.setOrigin(btVector3(0,1,195));
+	Rocks[currentRock] -> setCenterOfMassTransform(transform);
 }
 
 
