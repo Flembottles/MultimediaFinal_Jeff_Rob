@@ -83,7 +83,7 @@ void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::Stri
 	//rockNode->pitch(Ogre::Degree(90));
 	rockNode->attachObject(rockEntity);
 	rockNode->setPosition(pos);
-
+	rockNodes.push_back(rockNode);
 	btTransform Transform;
 	Transform.setIdentity();
 	Transform.setOrigin(change);
@@ -257,6 +257,7 @@ void Application::updatePhysics(unsigned int deltaTime)
 }
 bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
+
 	if(mWindow->isClosed())
 		return false;
  
@@ -283,10 +284,8 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
 			mDetailsPanel->setParamValue(7, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().z));
 		}
 	}
-
 	updatePhysics(16);
 
-	return true;
 }
 
 bool Application::setup()
