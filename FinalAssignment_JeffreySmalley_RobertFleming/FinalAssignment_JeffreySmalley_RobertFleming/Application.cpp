@@ -539,28 +539,28 @@ bool Application::keyPressed( const OIS::KeyEvent &arg )
 	{
 		if (power<12.0)
 		{
-			power+=0.2;
+			power+=2.0;
 		}
 	}
 	else if (arg.key == OIS::KC_DOWN)
 	{
 		if (power>0.0)
 		{
-			power-=0.2;
+			power-=2.0;
 		}
 	}
 	else if (arg.key == OIS::KC_LEFT)
 	{
 		if (angle>-20.0)
 		{
-			angle-=0.2;
+			angle-=2.0;
 		}
 	}
 	else if (arg.key == OIS::KC_RIGHT)
 	{
 		if (angle<20.0)
 		{
-			angle+=0.2;
+			angle+=2.0;
 		}
 	}
  
