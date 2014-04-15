@@ -289,7 +289,7 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
 		}
 	}
 	updatePhysics(16);
-
+	return true;
 }
 
 bool Application::setup()
