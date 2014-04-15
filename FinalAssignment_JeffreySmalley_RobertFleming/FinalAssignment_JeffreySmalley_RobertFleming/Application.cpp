@@ -519,6 +519,34 @@ bool Application::keyPressed( const OIS::KeyEvent &arg )
 			gameState = THROWN;
 		}
 	}
+	else if (arg.key == OIS::KC_UP)
+	{
+		if (power<12.0)
+		{
+			power+=0.1;
+		}
+	}
+	else if (arg.key == OIS::KC_DOWN)
+	{
+		if (power>0.0)
+		{
+			power-=0.1;
+		}
+	}
+	else if (arg.key == OIS::KC_LEFT)
+	{
+		if (angle>-20.0)
+		{
+			angle-=0.1;
+		}
+	}
+	else if (arg.key == OIS::KC_RIGHT)
+	{
+		if (angle<20.0)
+		{
+			angle+=0.1;
+		}
+	}
  
 	mCameraMan->injectKeyDown(arg);
 	return true;
