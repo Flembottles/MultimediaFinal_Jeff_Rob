@@ -126,6 +126,8 @@ void Application::createScene()
 	Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_ANISOTROPIC);
 	Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(16);
 	
+	//mTrayMgr->createLabel(OgreBites::TL_TOP,Ogre::StringConverter::toString(power),"");
+
 	// Set ambient light
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f,0.5f,0.5f));
 	Ogre::Light* pointLight1 = mSceneMgr->createLight("light1");
@@ -398,6 +400,8 @@ bool Application::setup()
 	}
 
 	countToNextThrow = nextThrowSet;
+	power = 0;
+	angle = 0;
 
 	return true;
 }
@@ -515,6 +519,7 @@ bool Application::keyPressed( const OIS::KeyEvent &arg )
 	{
 		if (gameState == THROW)
 		{
+			Rocks[currentRock]->activate(true);
 			Rocks[currentRock]->setLinearVelocity(btVector3(0,0,-10));
 			gameState = THROWN;
 		}
@@ -548,7 +553,7 @@ bool Application::keyPressed( const OIS::KeyEvent &arg )
 		}
 	}
  
-	mCameraMan->injectKeyDown(arg);
+	//mCameraMan->injectKeyDown(arg);
 	return true;
 }
  
