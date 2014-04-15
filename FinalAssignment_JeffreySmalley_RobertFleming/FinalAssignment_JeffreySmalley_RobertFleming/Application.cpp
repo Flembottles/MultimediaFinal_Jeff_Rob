@@ -15,7 +15,7 @@ This source file is part of the
 -----------------------------------------------------------------------------
 */
 #include "Application.h"
-#include <OgreMath.h>
+#include <math.h>
 enum gameStateList{START_ROUND,THROW,THROWN,HOUSE,REST};
 gameStateList gameState;
 
@@ -226,6 +226,8 @@ void Application::createScene()
 	createRock(btVector3(20,5,221),1,"YellowRockMaterial");
 	
 	rockOp = 12;
+	hammer = false;
+
 
 	mDebugDrawer = new OgreDebugDrawer( mSceneMgr );
     mDebugDrawer->setDebugMode( btIDebugDraw::DBG_DrawWireframe );
@@ -517,7 +519,11 @@ bool Application::keyPressed( const OIS::KeyEvent &arg )
 	{
 		if (gameState == THROW)
 		{
-			Rocks[currentRock]->setLinearVelocity(btVector3(0,0,-10));
+			float angleR = angle*(3.14159265359/180);
+			zPow= power*cos(angleR);
+			xPow = power*sin(angleR);
+			Rocks[currentRock]->setLinearVelocity(btVector3(xPow,0, -zPow));
+			Rocks[currentRock]->activate(true);
 			gameState = THROWN;
 		}
 	}
@@ -563,7 +569,10 @@ bool Application::keyReleased( const OIS::KeyEvent &arg )
 
 void Application::nextRock()
 {
+	hammer = !hammer;
 	currentRock+= rockOp;
+	if (!hammer)
+		currentRock++;
 	if (currentRock>=rockOp*2)
 	{
 		currentRock-=rockOp*2;
@@ -598,11 +607,18 @@ void Application::boundsCheck()
 {
 	for (int i = 0; i <Rocks.size();i++)
 	{
-		if (rockNodes[i]->getPosition().x < 221 || rockNodes[i]->getPosition().x > -221)
+		if (rockNodes[i]->getPosition().x > 25 || rockNodes[i]->getPosition().x < -25)
 		{
 			outOfBounds(i);
 		}
 	}
+	if (rockNodes[currentRock]->getPosition().x > 20 )
+	{
+ 		outOfBounds(currentRock);
+		gameState= REST;
+
+	}
+
 }
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 #define WIN32_LEAN_AND_MEAN

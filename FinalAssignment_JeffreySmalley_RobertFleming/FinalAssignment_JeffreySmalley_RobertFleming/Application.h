@@ -33,6 +33,11 @@ protected:
 
 	float angle;
 	float power;
+
+	float xPow;
+	float zPow;
+	bool hammer;
+
 	int countToNextThrow;
 
 	std::vector<Ogre::SceneNode*> rockNodes;
