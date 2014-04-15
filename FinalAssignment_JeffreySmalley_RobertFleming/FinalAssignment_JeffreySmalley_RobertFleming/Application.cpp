@@ -71,7 +71,7 @@ void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::Stri
 	rockEntity->setCastShadows(true);
 	//rockNode[i] = mSceneMgr->getRootSceneNode()->createChildSceneNode("RockNode "+ number,Ogre::Vector3(0,1,170));
 	Ogre::AxisAlignedBox boundingBox = rockEntity->getBoundingBox();
-	size = boundingBox.getSize()*0.95f;
+	size = boundingBox.getSize()*1.2f;
 	btVector3 change;
 	change = Position;
 	change.setY(size.y*0.5f);
@@ -295,6 +295,7 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
 		break;
 	case THROWN:
 		mCamera->setPosition(0,8,rockNodes[currentRock]->getPosition().z + 20);
+		//mCamera.setOrientation(
 		if (rockNodes[currentRock]->getPosition().z < -110)
 		{
 			gameState = HOUSE;
