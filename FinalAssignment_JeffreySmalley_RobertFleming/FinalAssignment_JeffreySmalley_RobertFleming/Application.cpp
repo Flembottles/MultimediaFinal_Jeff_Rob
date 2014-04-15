@@ -128,6 +128,8 @@ void Application::createScene()
 	Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(16);
 	
 	//mTrayMgr->createLabel(OgreBites::TL_TOP,Ogre::StringConverter::toString(power),"");
+	
+	//powerAndAngleLabel = mTrayMgr->createLabel(OgreBites::TL_TOP,"Testing1","");
 
 	// Set ambient light
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f,0.5f,0.5f));
@@ -523,6 +525,7 @@ bool Application::keyPressed( const OIS::KeyEvent &arg )
 	{
 		if (gameState == THROW)
 		{
+			power = 10;
 			float angleR = angle*(3.14159265359/180);
 			zPow= power*cos(angleR);
 			xPow = power*sin(angleR);
@@ -535,28 +538,28 @@ bool Application::keyPressed( const OIS::KeyEvent &arg )
 	{
 		if (power<12.0)
 		{
-			power+=0.1;
+			power+=0.2;
 		}
 	}
 	else if (arg.key == OIS::KC_DOWN)
 	{
 		if (power>0.0)
 		{
-			power-=0.1;
+			power-=0.2;
 		}
 	}
 	else if (arg.key == OIS::KC_LEFT)
 	{
 		if (angle>-20.0)
 		{
-			angle-=0.1;
+			angle-=0.2;
 		}
 	}
 	else if (arg.key == OIS::KC_RIGHT)
 	{
 		if (angle<20.0)
 		{
-			angle+=0.1;
+			angle+=0.2;
 		}
 	}
  

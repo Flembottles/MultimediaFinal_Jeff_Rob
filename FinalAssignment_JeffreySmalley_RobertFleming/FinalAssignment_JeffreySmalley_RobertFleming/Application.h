@@ -24,6 +24,7 @@ public:
 	Application();
 	virtual ~Application();
 protected:
+	OgreBites::Label* powerAndAngleLabel;
 	int m_pNumRocks;
 	std::vector<btVector3> rockRackPos;
 	int currentRock;
