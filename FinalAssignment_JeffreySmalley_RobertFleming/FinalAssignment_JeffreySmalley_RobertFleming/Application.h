@@ -28,6 +28,8 @@ protected:
 
 	int currentRock;
 	int rockOp;
+	int rocksThrown;
+	bool redTeamStart;
 
 	std::vector<Ogre::SceneNode*> rockNodes;
 
@@ -51,7 +53,7 @@ protected:
 	
 	virtual bool setup();
 	void createRock(const btVector3 &Position, btScalar Mass,Ogre::String material);
-	void startRock(int startNum);
+	void startRock(bool red);
 	void updatePhysics(unsigned int deltaTime);
 	virtual void createScene();
 	virtual void createCamera();
@@ -59,6 +61,8 @@ protected:
 	virtual bool keyPressed( const OIS::KeyEvent &arg );
 	virtual bool keyReleased( const OIS::KeyEvent &arg );
 	virtual bool mouseMoved( const OIS::MouseEvent &arg );
+	void nextRock();
+	void setRock();
 	//virtual void setupResources();
 	//virtual void createViewports();
 };
