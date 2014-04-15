@@ -19,6 +19,8 @@ This source file is part of the
 enum gameStateList{START_ROUND,THROW,THROWN,HOUSE,REST};
 gameStateList gameState;
 
+const int nextThrowSet = 200;
+
 Ogre::Vector3 throwCamera = Ogre::Vector3(0,8,213),
 	followCamera,
 	houseCamera = Ogre::Vector3(0,65,-160);
@@ -281,10 +283,30 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
 		startRock(redTeamStart);
 		break;
 	case THROW:
+		mCamera->setPosition(throwCamera);
+		mCamera->setOrientation(throwCameraLook);
 		break;
 	case THROWN:
+		mCamera->setPosition(0,8,rockNodes[currentRock]->getPosition().z + 20);
+		if (rockNodes[currentRock]->getPosition().z < -110)
+		{
+			gameState = HOUSE;
+		}
 		break;
 	case HOUSE:
+		mCamera->setPosition(houseCamera);
+		mCamera->setOrientation(houseCameraLook);
+		if (Rocks[currentRock]->getActivationState()==2)
+		{
+			countToNextThrow--;
+		}
+		if (countToNextThrow<=0)
+		{
+			mCamera->setPosition(throwCamera);
+			mCamera->setOrientation(throwCameraLook);
+			countToNextThrow = nextThrowSet;
+			gameState = REST;
+		}
 		break;
 	case REST:
 		nextRock();
@@ -374,13 +396,16 @@ bool Application::setup()
 		startRock(false);
 		setRock();
 	}
+
+	countToNextThrow = nextThrowSet;
+
 	return true;
 }
 
 bool Application::mouseMoved( const OIS::MouseEvent &arg )
 {
 	if (mTrayMgr->injectMouseMove(arg)) return true;
-	mCameraMan->injectMouseMove(arg);
+	//mCameraMan->injectMouseMove(arg);
 	return true;
 }
 bool Application::keyPressed( const OIS::KeyEvent &arg )
@@ -485,6 +510,14 @@ bool Application::keyPressed( const OIS::KeyEvent &arg )
 	{
 		mCamera->setPosition(houseCamera);
 		mCamera->setOrientation(houseCameraLook);
+	}
+	else if (arg.key == OIS::KC_SPACE)
+	{
+		if (gameState == THROW)
+		{
+			Rocks[currentRock]->setLinearVelocity(btVector3(0,0,-10));
+			gameState = THROWN;
+		}
 	}
  
 	mCameraMan->injectKeyDown(arg);

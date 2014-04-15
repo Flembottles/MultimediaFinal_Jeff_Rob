@@ -31,6 +31,10 @@ protected:
 	int rocksThrown;
 	bool redTeamStart;
 
+	float angle;
+	float power;
+	int countToNextThrow;
+
 	std::vector<Ogre::SceneNode*> rockNodes;
 
 	std::vector<btRigidBody*> Rocks;
