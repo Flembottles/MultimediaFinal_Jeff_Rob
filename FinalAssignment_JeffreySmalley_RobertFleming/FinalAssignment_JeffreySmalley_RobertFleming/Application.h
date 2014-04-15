@@ -25,7 +25,7 @@ public:
 	virtual ~Application();
 protected:
 	int m_pNumRocks;
-
+	std::vector<btVector3> rockRackPos;
 	int currentRock;
 	int rockOp;
 	int rocksThrown;
@@ -33,6 +33,11 @@ protected:
 
 	float angle;
 	float power;
+
+	float xPow;
+	float zPow;
+	bool hammer;
+
 	int countToNextThrow;
 
 	std::vector<Ogre::SceneNode*> rockNodes;
@@ -67,6 +72,9 @@ protected:
 	virtual bool mouseMoved( const OIS::MouseEvent &arg );
 	void nextRock();
 	void setRock();
+	void rerack();
+	void outOfBounds(int rockNumber);
+	void boundsCheck();
 	//virtual void setupResources();
 	//virtual void createViewports();
 };

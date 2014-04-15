@@ -15,7 +15,7 @@ This source file is part of the
 -----------------------------------------------------------------------------
 */
 #include "Application.h"
-#include <OgreMath.h>
+#include <math.h>
 enum gameStateList{START_ROUND,THROW,THROWN,HOUSE,REST};
 gameStateList gameState;
 
@@ -78,6 +78,7 @@ void Application::createRock(const btVector3 &Position, btScalar Mass,Ogre::Stri
 	pos.x = Position.getX();
 	pos.y = Position.getY();
 	pos.z = Position.getZ();
+	rockRackPos.push_back(change);
 	//rockNode[i]->attachObject(rockEntity[i]);
 	rockEntity->setMaterialName(material);
 	Ogre::SceneNode *rockNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
@@ -191,6 +192,7 @@ void Application::createScene()
 	//Ogre::Entity *rockEntity[24];//= mSceneMgr->createEntity("Rock", "rock.mesh");
 	//Ogre::SceneNode *rockNode[24];//= mSceneMgr->getRootSceneNode()->createChildSceneNode("RockNode",Ogre::Vector3(0,1,170));
 	m_pNumRocks = 0;
+
 	createRock(btVector3(-11,5,215),1,"RedRockMaterial");
 	createRock(btVector3(-11,5,218),1,"RedRockMaterial");
 	createRock(btVector3(-11,5,221),1,"RedRockMaterial");
@@ -226,6 +228,8 @@ void Application::createScene()
 	createRock(btVector3(20,5,221),1,"YellowRockMaterial");
 	
 	rockOp = 12;
+	hammer = false;
+
 
 	mDebugDrawer = new OgreDebugDrawer( mSceneMgr );
     mDebugDrawer->setDebugMode( btIDebugDraw::DBG_DrawWireframe );
@@ -246,7 +250,6 @@ void Application::createScene()
 	/*transform = Rocks[12]-> getCenterOfMassTransform();
 	transform.setOrigin(btVector3(0,1,150));
 	Rocks[12] -> setCenterOfMassTransform(transform);*/
-
 }
 void Application::updatePhysics(unsigned int deltaTime)
 {
@@ -338,6 +341,7 @@ bool Application::frameRenderingQueued(const Ogre::FrameEvent& evt)
 	}
 	updatePhysics(16);
 	
+	boundsCheck();
 
 	return true;
 }
@@ -519,8 +523,11 @@ bool Application::keyPressed( const OIS::KeyEvent &arg )
 	{
 		if (gameState == THROW)
 		{
+			float angleR = angle*(3.14159265359/180);
+			zPow= power*cos(angleR);
+			xPow = power*sin(angleR);
+			Rocks[currentRock]->setLinearVelocity(btVector3(xPow,0, -zPow));
 			Rocks[currentRock]->activate(true);
-			Rocks[currentRock]->setLinearVelocity(btVector3(0,0,-10));
 			gameState = THROWN;
 		}
 	}
@@ -566,7 +573,10 @@ bool Application::keyReleased( const OIS::KeyEvent &arg )
 
 void Application::nextRock()
 {
+	hammer = !hammer;
 	currentRock+= rockOp;
+	if (!hammer)
+		currentRock++;
 	if (currentRock>=rockOp*2)
 	{
 		currentRock-=rockOp*2;
@@ -581,7 +591,39 @@ void Application::setRock()
 	Rocks[currentRock] -> setCenterOfMassTransform(transform);
 }
 
+void Application::rerack()
+{
+	for(int i =0; i<24;i++)
+	{
+		btTransform transform = Rocks[i]-> getCenterOfMassTransform();
+		transform.setOrigin(rockRackPos[i]);
+		Rocks[i] -> setCenterOfMassTransform(transform);
+	}
+}
+void Application::outOfBounds(int rockNumber)
+{
+	btTransform transform = Rocks[rockNumber]-> getCenterOfMassTransform();
+	transform.setOrigin(btVector3(-rockRackPos[rockNumber].x(),-rockRackPos[rockNumber].y(),-rockRackPos[rockNumber].z()));
+	Rocks[rockNumber] -> setCenterOfMassTransform(transform);
+	Rocks[rockNumber]->setActivationState(2);
+}
+void Application::boundsCheck()
+{
+	for (int i = 0; i <Rocks.size();i++)
+	{
+		if (rockNodes[i]->getPosition().x > 25 || rockNodes[i]->getPosition().x < -25)
+		{
+			outOfBounds(i);
+		}
+	}
+	if (rockNodes[currentRock]->getPosition().x > 20 )
+	{
+ 		outOfBounds(currentRock);
+		gameState= REST;
 
+	}
+
+}
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 #define WIN32_LEAN_AND_MEAN
 #include "windows.h"
